@@ -1,0 +1,64 @@
+﻿@model AgriStream.Web.Models.TelemetryViewModel
+@{
+    ViewData["Title"] = "Field Telemetry";
+}
+
+<h2>Field Telemetry</h2>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="d-flex gap-3 align-items-end mb-3">
+    <form method="get" asp-action="Index" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label">Field</label>
+            <select name="field" class="form-select" onchange="this.form.submit()">
+                @foreach (var f in Model.Fields)
+                {
+                    <option value="@f" selected="@(f == Model.SelectedField)">@f</option>
+                }
+            </select>
+        </div>
+    </form>
+
+    <form method="post" asp-action="Simulate">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="field" value="@Model.SelectedField" />
+        <button type="submit" class="btn btn-success">Simulate sensor readings</button>
+    </form>
+</div>
+
+@if (!Model.Readings.Any())
+{
+    <p>No readings for this field yet. Click <strong>Simulate sensor readings</strong>.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Time (UTC)</th>
+                <th>Device</th>
+                <th>Moisture %</th>
+                <th>Soil temp °C</th>
+                <th>Humidity %</th>
+                <th>pH</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.Readings)
+            {
+                <tr class="@(r.SoilMoisturePercent < 30 ? "table-warning" : "")">
+                    <td>@r.ReadingTimeUtc.UtcDateTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@r.DeviceId</td>
+                    <td>@r.SoilMoisturePercent</td>
+                    <td>@r.SoilTemperatureC</td>
+                    <td>@r.HumidityPercent</td>
+                    <td>@r.Ph</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p class="small text-muted">Rows highlighted yellow have low soil moisture (below 30%).</p>
+}
