@@ -1,6 +1,8 @@
 using AgriStream.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Azure.Storage.Blobs;
+using AgriStream.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
+
+builder.Services.AddSingleton(new BlobServiceClient(
+    builder.Configuration["AzureStorage:ConnectionString"]));
+builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 
 var app = builder.Build();
 

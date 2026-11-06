@@ -1,0 +1,34 @@
+﻿@model List<AgriStream.Web.Services.DroneImageInfo>
+@{
+    ViewData["Title"] = "Drone Images";
+}
+
+<h2>Drone Images</h2>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+<a asp-action="Upload" class="btn btn-success mb-3">Upload new image</a>
+
+<div class="row">
+    @foreach (var img in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@img.Url" class="card-img-top" style="height:200px;object-fit:cover" alt="Drone image" />
+                <div class="card-body">
+                    <h6 class="card-title">@img.FieldName</h6>
+                    <p class="card-text small text-muted">
+                        By @img.UploadedBy<br />
+                        @img.UploadedOn?.LocalDateTime.ToString("yyyy-MM-dd HH:mm")<br />
+                        @(img.SizeBytes / 1024) KB
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (!Model.Any())
+{
+    <p>No images uploaded yet.</p>
+}

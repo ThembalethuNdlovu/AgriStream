@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Upload Drone Image";
+}
+<h2>Upload Drone Image</h2>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data" style="max-width:500px">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3">
+        <label class="form-label">Field name</label>
+        <input type="text" name="fieldName" class="form-control" placeholder="e.g. North Field 3" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Image</label>
+        <input type="file" name="file" class="form-control" accept=".jpg,.jpeg,.png,.tif,.tiff" required />
+    </div>
+    <button type="submit" class="btn btn-success">Upload</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
