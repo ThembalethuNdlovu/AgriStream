@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Azure.Storage.Blobs;
 using AgriStream.Web.Services;
 using Azure.Data.Tables;
+using AgriStream.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 builder.Services.AddSingleton(new TableServiceClient(
     builder.Configuration["AzureStorage:ConnectionString"]));
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
+builder.Services.AddHttpClient<IFunctionsClient, FunctionsClient>();
 
 var app = builder.Build();
 

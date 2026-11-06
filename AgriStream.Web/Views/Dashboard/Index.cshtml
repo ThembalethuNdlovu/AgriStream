@@ -1,0 +1,56 @@
+﻿@model AgriStream.Web.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Field Dashboard";
+}
+
+<h1>Field Dashboard</h1>
+
+@if (TempData["Message"] is string msg)
+{
+    <div class="alert alert-success">@msg</div>
+}
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input name="field" value="@Model.Field" class="form-control" placeholder="Field name" />
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Load telemetry</button></div>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.Field))
+{
+    <form method="post" asp-action="Irrigate" class="row g-2 mb-4">
+        <input type="hidden" name="field" value="@Model.Field" />
+        <div class="col-auto"><input name="deviceId" type="number" min="1" class="form-control" placeholder="Device ID" required /></div>
+        <div class="col-auto"><input name="minutes" type="number" min="1" max="120" value="15" class="form-control" /></div>
+        <div class="col-auto"><button class="btn btn-success">Trigger Irrigation</button></div>
+    </form>
+
+    @if (!Model.Readings.Any())
+    {
+        <p>No readings found for this field.</p>
+    }
+    else
+    {
+        var cols = Model.Readings.SelectMany(r => r.Keys).Distinct().ToList();
+        <table class="table table-striped">
+            <thead><tr>@foreach (var c in cols) {
+            <th>@c</th>
+        }
+    </tr></thead>
+        <tbody>
+            @foreach (var r in Model.Readings)
+            {
+                <tr>@foreach (var c in cols) {
+                <td>@(r.TryGetValue(c, out var v) ? v.ToString() : "")</td>
+            }
+    </tr>
+        }
+    </tbody>
+</table>
+    }
+}
